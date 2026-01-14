@@ -1,0 +1,117 @@
+// SQL Grammar for Simple RDBMS
+//
+// Defines the subset of SQL supported by this database.
+// Uses Lark parser syntax (similar to EBNF).
+
+?start: statement
+
+// Top-level statements
+statement: create_table_stmt
+         | drop_table_stmt
+         | create_index_stmt
+         | insert_stmt
+         | select_stmt
+         | update_stmt
+         | delete_stmt
+
+// CREATE TABLE name (col1 TYPE constraints, col2 TYPE, ...)
+create_table_stmt: "CREATE"i "TABLE"i NAME "(" column_def ("," column_def)* ")"
+
+column_def: NAME data_type constraint*
+
+data_type: "INTEGER"i                          -> type_integer
+         | "INT"i                              -> type_int
+         | "FLOAT"i                            -> type_float
+         | "REAL"i                             -> type_real
+         | "VARCHAR"i "(" NUMBER ")"           -> type_varchar
+         | "TEXT"i                             -> type_text
+         | "BOOLEAN"i                          -> type_boolean
+         | "BOOL"i                             -> type_bool
+
+constraint: "PRIMARY"i "KEY"i                  -> constraint_primary_key
+          | "UNIQUE"i                           -> constraint_unique
+          | "NOT"i "NULL"i                     -> constraint_not_null
+
+// DROP TABLE name
+drop_table_stmt: "DROP"i "TABLE"i NAME
+
+// CREATE INDEX name ON table(column)
+create_index_stmt: "CREATE"i "INDEX"i NAME "ON"i NAME "(" NAME ")"
+
+// INSERT INTO table (col1, col2) VALUES (val1, val2)
+insert_stmt: "INSERT"i "INTO"i NAME "(" name_list ")" "VALUES"i "(" value_list ")"
+
+name_list: NAME ("," NAME)*
+
+value_list: literal ("," literal)*
+
+// SELECT columns FROM table JOIN ... WHERE condition
+select_stmt: "SELECT"i select_list "FROM"i NAME join_clause? where_clause?
+
+select_list: "*"                               -> select_all
+           | column_name ("," column_name)*   -> select_columns
+
+column_name: qualified_name | NAME
+
+where_clause: "WHERE"i condition
+
+join_clause: "INNER"i "JOIN"i NAME "ON"i join_condition
+
+join_condition: qualified_name "=" qualified_name
+
+qualified_name: NAME "." NAME
+
+// UPDATE table SET col1=val1, col2=val2 WHERE condition
+update_stmt: "UPDATE"i NAME "SET"i assignment_list where_clause?
+
+assignment_list: assignment ("," assignment)*
+
+assignment: NAME "=" literal
+
+// DELETE FROM table WHERE condition
+delete_stmt: "DELETE"i "FROM"i NAME where_clause?
+
+// WHERE clause conditions with proper precedence
+// OR has lowest precedence, AND has higher precedence, parentheses highest
+condition: or_term
+
+or_term: or_term "OR"i and_term                -> condition_or
+       | and_term
+
+and_term: and_term "AND"i primary              -> condition_and
+        | primary
+
+primary: comparison
+       | "(" condition ")"                     -> condition_parens
+
+comparison: expr comparison_op expr
+
+comparison_op: "="                             -> op_eq
+             | "!="                            -> op_ne
+             | "<>"                            -> op_ne2
+             | "<"                             -> op_lt
+             | ">"                             -> op_gt
+             | "<="                            -> op_lte
+             | ">="                            -> op_gte
+
+expr: NAME                                     -> expr_column
+    | qualified_name                          -> expr_qualified_column
+    | literal                                  -> expr_literal
+
+literal: NUMBER                                -> lit_number
+       | ESCAPED_STRING                       -> lit_string
+       | "TRUE"i                               -> lit_true
+       | "FALSE"i                              -> lit_false
+       | "NULL"i                               -> lit_null
+
+// Lexer rules (terminals)
+NAME: /[a-zA-Z_][a-zA-Z0-9_]*/
+NUMBER: /[+-]?[0-9]+(\.[0-9]+)?([eE][+-]?[0-9]+)?/
+ESCAPED_STRING: /'([^'\\]|\\.)*'|"([^"\\]|\\.)*"/
+
+// Whitespace and comments
+%import common.WS
+%ignore WS
+
+COMMENT: "--" /[^\n]*/
+%ignore COMMENT

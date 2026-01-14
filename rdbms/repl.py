@@ -19,6 +19,7 @@ def print_banner():
     print("  Simple RDBMS - Interactive SQL Shell")
     print("=" * 60)
     print("Type SQL commands or special commands:")
+    print("  Multi-line input supported - end with semicolon (;)")
     print("  .help     - Show help")
     print("  .tables   - List all tables")
     print("  .schema TABLE - Show table schema")
@@ -125,6 +126,7 @@ def repl():
     Run the interactive REPL.
 
     Reads SQL commands, executes them, and displays results.
+    Supports multi-line input - continues reading until semicolon is found.
     """
     print_banner()
 
@@ -136,12 +138,40 @@ def repl():
     # Main loop
     while True:
         try:
-            # Read command
-            try:
-                sql = input("rdbms> ").strip()
-            except EOFError:
-                print("\nGoodbye!")
-                break
+            # Read command (possibly multi-line)
+            sql_lines = []
+            prompt = "rdbms> "
+
+            while True:
+                try:
+                    line = input(prompt).strip()
+                except EOFError:
+                    print("\nGoodbye!")
+                    return
+
+                # Accumulate non-empty lines
+                if line:
+                    sql_lines.append(line)
+
+                    # Check if this is a special command
+                    if line.startswith('.'):
+                        break
+
+                    # Check if statement is complete (ends with semicolon)
+                    if line.endswith(';'):
+                        break
+
+                    # Continue reading with continuation prompt
+                    prompt = "    -> "
+                else:
+                    # Empty line with no accumulated content
+                    if not sql_lines:
+                        break
+                    # Empty line in middle of statement, continue
+                    prompt = "    -> "
+
+            # Join all lines into complete SQL statement
+            sql = ' '.join(sql_lines)
 
             if not sql:
                 continue

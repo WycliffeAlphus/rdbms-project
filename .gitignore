@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Virtual environments
+venv/
+env/
+ENV/
+
+# Poetry - DO NOT ignore poetry.lock for applications (ensures reproducible builds)
+# Only ignore poetry.lock if this were a library
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Database files (for stretch goal persistence)
+*.db
+*.sqlite
+data/
+
+# OS
+.DS_Store
+Thumbs.db

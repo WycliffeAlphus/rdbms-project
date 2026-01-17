@@ -97,10 +97,10 @@ poetry run python -m rdbms.repl
 **Example Session:**
 ```sql
 rdbms> CREATE TABLE users (
-    ->   id INTEGER PRIMARY KEY,
-    ->   name VARCHAR(50),
-    ->   age INTEGER
-    -> );
+         id INTEGER PRIMARY KEY,
+         name VARCHAR(50),
+         age INTEGER
+       );
 CREATE TABLE OK: users
 
 rdbms> INSERT INTO users (id, name, age) VALUES (1, 'Alice', 30);
@@ -109,8 +109,7 @@ INSERT OK, 1 row affected
 rdbms> INSERT INTO users (id, name, age) VALUES (2, 'Bob', 25);
 INSERT OK, 1 row affected
 
-rdbms> SELECT * FROM users
-    -> WHERE age > 25;
+rdbms> SELECT * FROM users WHERE age > 25;
 +------+-------+-------+
 |   id | name  |   age |
 +======+=======+=======+
@@ -130,7 +129,7 @@ rdbms> .exit
 Goodbye!
 ```
 
-**Multiline Input:** The REPL supports multiline SQL statements. Continue typing until you end with a semicolon (`;`). The `->` prompt indicates a continuation line.
+**Multiline Input:** The REPL supports multiline SQL statements. Continue typing until you end with a semicolon (`;`).
 
 **Special REPL Commands:**
 - `.help` - Show available commands

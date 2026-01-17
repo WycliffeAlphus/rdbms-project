@@ -5,12 +5,42 @@ Provides command-line interface to the database.
 """
 
 import sys
+import select
 from .storage.database import Database
 from .parser.parser import SQLParser
 from .executor.executor import QueryExecutor
 from .formatter import format_select_result, format_modify_result, format_ddl_result
 from .parser import ast
 from .utils.exceptions import RDBMSError
+
+
+def has_pending_input():
+    """Check if there's input waiting in stdin (indicates paste)."""
+    if not sys.stdin.isatty():
+        return True
+    try:
+        r, _, _ = select.select([sys.stdin], [], [], 0)
+        return bool(r)
+    except (ValueError, OSError, TypeError):
+        return False
+
+
+def read_line_raw(prompt, suppress_if_pending=False):
+    """
+    Read a line using raw stdin to avoid readline interference.
+
+    This prevents issues with paste operations where prompts
+    can get mixed into the input buffer.
+    """
+    # Suppress prompt during paste operations
+    if suppress_if_pending and has_pending_input():
+        prompt = ""
+    sys.stdout.write(prompt)
+    sys.stdout.flush()
+    line = sys.stdin.readline()
+    if not line:  # EOF
+        raise EOFError()
+    return line.rstrip('\n\r')
 
 
 def print_banner():
@@ -140,11 +170,15 @@ def repl():
         try:
             # Read command (possibly multi-line)
             sql_lines = []
-            prompt = "rdbms> "
+            is_continuation = False
 
             while True:
                 try:
-                    line = input(prompt).strip()
+                    if is_continuation:
+                        # Suppress continuation prompt during paste
+                        line = read_line_raw("    -> ", suppress_if_pending=True).strip()
+                    else:
+                        line = read_line_raw("rdbms> ").strip()
                 except EOFError:
                     print("\nGoodbye!")
                     return
@@ -161,14 +195,14 @@ def repl():
                     if line.endswith(';'):
                         break
 
-                    # Continue reading with continuation prompt
-                    prompt = "    -> "
+                    # Continue reading
+                    is_continuation = True
                 else:
                     # Empty line with no accumulated content
                     if not sql_lines:
                         break
                     # Empty line in middle of statement, continue
-                    prompt = "    -> "
+                    is_continuation = True
 
             # Join all lines into complete SQL statement
             sql = ' '.join(sql_lines)

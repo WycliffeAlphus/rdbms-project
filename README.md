@@ -96,33 +96,41 @@ poetry run python -m rdbms.repl
 
 **Example Session:**
 ```sql
-rdbms> CREATE TABLE users (id INTEGER PRIMARY KEY, name VARCHAR(50), age INTEGER)
+rdbms> CREATE TABLE users (
+    ->   id INTEGER PRIMARY KEY,
+    ->   name VARCHAR(50),
+    ->   age INTEGER
+    -> );
 CREATE TABLE OK: users
 
-rdbms> INSERT INTO users (id, name, age) VALUES (1, 'Alice', 30)
+rdbms> INSERT INTO users (id, name, age) VALUES (1, 'Alice', 30);
 INSERT OK, 1 row affected
 
-rdbms> INSERT INTO users (id, name, age) VALUES (2, 'Bob', 25)
+rdbms> INSERT INTO users (id, name, age) VALUES (2, 'Bob', 25);
 INSERT OK, 1 row affected
 
-rdbms> SELECT * FROM users WHERE age > 25
-╒══════╤═══════╤═══════╕
-│   id │ name  │   age │
-╞══════╪═══════╪═══════╡
-│    1 │ Alice │    30 │
-╘══════╧═══════╧═══════╛
+rdbms> SELECT * FROM users
+    -> WHERE age > 25;
++------+-------+-------+
+|   id | name  |   age |
++======+=======+=======+
+|    1 | Alice |    30 |
++------+-------+-------+
 (1 row)
 
-rdbms> UPDATE users SET age = 31 WHERE id = 1
+rdbms> UPDATE users SET age = 31 WHERE id = 1;
 UPDATE OK, 1 row affected
 
 rdbms> .tables
+
 Tables:
   - users (2 rows)
 
 rdbms> .exit
 Goodbye!
 ```
+
+**Multiline Input:** The REPL supports multiline SQL statements. Continue typing until you end with a semicolon (`;`). The `->` prompt indicates a continuation line.
 
 **Special REPL Commands:**
 - `.help` - Show available commands
@@ -227,23 +235,24 @@ CREATE TABLE products (
     name VARCHAR(100) UNIQUE,
     price FLOAT,
     in_stock BOOLEAN
-)
+);
 ```
 
 ### Data Manipulation
 ```sql
 -- Insert
 INSERT INTO products (id, name, price, in_stock)
-VALUES (1, 'Laptop', 999.99, TRUE)
+VALUES (1, 'Laptop', 999.99, TRUE);
 
 -- Select with WHERE
-SELECT name, price FROM products WHERE in_stock = TRUE AND price < 1000
+SELECT name, price FROM products
+WHERE in_stock = TRUE AND price < 1000;
 
 -- Update
-UPDATE products SET price = 899.99 WHERE id = 1
+UPDATE products SET price = 899.99 WHERE id = 1;
 
 -- Delete
-DELETE FROM products WHERE in_stock = FALSE
+DELETE FROM products WHERE in_stock = FALSE;
 ```
 
 ### Joins
@@ -252,19 +261,19 @@ CREATE TABLE orders (
     id INTEGER PRIMARY KEY,
     product_id INTEGER,
     quantity INTEGER
-)
+);
 
 -- Inner join
 SELECT products.name, orders.quantity
 FROM products
 INNER JOIN orders ON products.id = orders.product_id
-WHERE orders.quantity > 1
+WHERE orders.quantity > 1;
 ```
 
 ### Indexes
 ```sql
 -- Create manual index
-CREATE INDEX idx_price ON products(price)
+CREATE INDEX idx_price ON products(price);
 
 -- Indexes automatically created for PRIMARY KEY and UNIQUE
 ```

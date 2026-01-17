@@ -294,17 +294,6 @@ poetry run python test_basic.py
 # ✓ All basic tests passed!
 ```
 
-## Future Enhancements
-
-### Possible Extensions (Not Implemented)
-- **Persistence**: JSON/MessagePack serialization, WAL, or SQLite-style pages
-- **ORDER BY & LIMIT**: Result sorting and pagination
-- **Aggregate Functions**: COUNT, SUM, AVG, MIN, MAX with GROUP BY
-- **LEFT/RIGHT JOINS**: Additional join types
-- **Subqueries**: Nested SELECT statements
-- **Transactions**: BEGIN, COMMIT, ROLLBACK with isolation
-- **B-Tree Indexes**: Range query support
-- **Query Optimization**: Better join algorithms, query cost estimation
 
 ## Credits & References
 

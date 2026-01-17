@@ -138,6 +138,10 @@ Goodbye!
 - `.stats` - Database statistics
 - `.exit` / `.quit` - Exit REPL
 
+**REPL DEMO:**
+
+[REPL.webm](https://github.com/user-attachments/assets/42dc936a-627a-4806-8e33-2ef1ebf3353c)
+
 ### Web Application
 
 ```bash
@@ -152,6 +156,10 @@ Then open http://localhost:5000 in your browser.
 - Full CRUD operations
 - Real-time updates
 - Category filtering
+
+**WEBAPP DEMO**
+
+[WebApp.webm](https://github.com/user-attachments/assets/e2ade61d-71b7-49fa-a7ec-db3ee94ffbeb)
 
 ## Architecture & Design
 

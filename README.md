@@ -290,16 +290,14 @@ CREATE INDEX idx_price ON products(price);
 ## Testing
 
 ```bash
-# Run quick functionality test
-poetry run python test_basic.py
+# Run all tests
+poetry run pytest
 
-# Expected output:
-# ✓ Table created
-# ✓ 3 rows inserted
-# ✓ Retrieved 3 rows
-# ✓ Found 2 matching rows
-# ✓ Updated 1 row(s)
-# ✓ All basic tests passed!
+# Run with verbose output
+poetry run pytest -v
+
+# Run specific test file
+poetry run pytest tests/test_executor.py
 ```
 
 

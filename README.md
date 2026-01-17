@@ -1,4 +1,4 @@
-# Simple RDBMS
+# RDBMS (Relational Database Management System)
 
 A relational database management system built from scratch in Python, featuring SQL parsing, query execution, indexing, and JOIN operations.
 
